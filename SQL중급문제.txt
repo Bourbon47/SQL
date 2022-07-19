@@ -1,0 +1,43 @@
+/* 1 */
+proc sql;
+   select *
+   , substr(phonenumber,1,3) as Phone
+   from airline.staffmaster
+   where calculated Phone contains '212';
+quit;
+
+/* 2 */
+proc sql;
+   select empid
+   , salary
+   from airline.payrollmaster
+   group by empid
+   having salary >=
+   (select max(salary)
+   from airline.payrollmaster);
+quit;
+
+/* 3 */
+proc sql;
+   select empid
+   , jobcode
+   , int((today()-dateofbirth)/365.25) as Age
+   from airline.payrollmaster
+   having age <= 50
+   order by age;
+quit;
+
+/* 4 */
+proc sql;
+   select jobcode
+   ,count(*) as count, max(salary) as maxsalary
+   label='Maximum salary'
+   format=dollar12.2
+   from airline.payrollmaster
+   where empid in
+   (select empid
+   from airline.staffmaster
+   where state contains 'NY')
+   group by jobcode
+   order by maxsalary desc;
+quit;
